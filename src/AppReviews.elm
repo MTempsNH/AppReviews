@@ -1,6 +1,8 @@
 module AppReviews exposing (..)
 
-import Html exposing (text)
+import Html exposing (Html, div, text, program)
+
+type alias Model = String
 
 main =
   text "Hello, World!"
