@@ -1,6 +1,7 @@
 module AppReviews exposing (..)
 
-import Html exposing (Html, label, div, form, text, p, program)
+import Html exposing (Html, button, label, div, form, text, p, program)
+import Html.Events exposing (onClick)
 import DemoCss exposing (CssClasses(..))
 import Css
 import DateTimePicker.Css
@@ -11,20 +12,31 @@ import DateTimePicker
 
 
 type alias Model = {
-    dateValue: Maybe Date
-    , datePickerState : DateTimePicker.State}
+    startDateValue: Maybe Date,
+    startDatePickerState : DateTimePicker.State,
+    endDateValue : Maybe Date,
+    endDatePickerState : DateTimePicker.State,
+    submitted : Bool
+    }
 
 init : (Model, Cmd Msg)
 init =
-    ({ dateValue = Nothing
-      , datePickerState = DateTimePicker.initialState
+    ({
+    startDateValue = Nothing,
+    startDatePickerState = DateTimePicker.initialState,
+    endDateValue = Nothing,
+    endDatePickerState = DateTimePicker.initialState,
+    submitted = False
       }, Cmd.batch
-                 [ DateTimePicker.initialCmd DateChanged DateTimePicker.initialState ]
+                 [ DateTimePicker.initialCmd DateChanged DateTimePicker.initialState,
+                  DateTimePicker.initialCmd EndDateChanged DateTimePicker.initialState ]
              )
 
 
 type Msg = NoOp
     | DateChanged DateTimePicker.State (Maybe Date)
+    | EndDateChanged DateTimePicker.State (Maybe Date)
+    | Submit
 
 view : Model -> Html Msg
 view model =
@@ -32,22 +44,44 @@ view model =
             { css } =
                 Css.compile [ DateTimePicker.Css.css ]
     in
-        form []
+        div [] [ form []
             [ Html.node "style" [] [ Html.text css ]
                         , div [ class [ Container ] ]
                 [ p
                     []
                     [ label []
-                        [ text "Date Picker: "
+                        [ text "Start Date Picker: "
                         , DateTimePicker.datePicker
                             DateChanged
                             []
-                            model.datePickerState
-                            model.dateValue
+                            model.startDatePickerState
+                            model.startDateValue
                         ]
                     ]
-                ]
-            ]
+
+                ],
+                div [] [ p
+                           []
+                           [ label []
+                               [ text "End Date Picker: "
+                               , DateTimePicker.datePicker
+                                   EndDateChanged
+                                   []
+                                   model.endDatePickerState
+                                   model.endDateValue
+                               ]
+                           ]
+
+                       ]
+            ],
+            div [] [ button [ onClick Submit ] [ text "Run Reports" ],
+
+            if model.submitted then
+                div [] [ text "Submitted" ]
+            else
+                div [] [ text "Not Submitted Yet" ]]
+        ]
+
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -57,7 +91,14 @@ update msg model =
             ( model, Cmd.none )
 
         DateChanged state value ->
-                    ( { model | dateValue = value, datePickerState = state }, Cmd.none )
+            ( { model | startDateValue = value, startDatePickerState = state }, Cmd.none )
+
+        EndDateChanged state value ->
+            ( { model | endDateValue = value, endDatePickerState = state }, Cmd.none )
+
+        Submit ->
+            ( { model | submitted = True }, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.none

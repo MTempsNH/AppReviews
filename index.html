@@ -23830,21 +23830,43 @@ var _user$project$AppReviews$subscriptions = function (model) {
 var _user$project$AppReviews$update = F2(
 	function (msg, model) {
 		var _p1 = msg;
-		if (_p1.ctor === 'NoOp') {
-			return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-		} else {
-			return {
-				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{dateValue: _p1._1, datePickerState: _p1._0}),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
+		switch (_p1.ctor) {
+			case 'NoOp':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'DateChanged':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{startDateValue: _p1._1, startDatePickerState: _p1._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'EndDateChanged':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{endDateValue: _p1._1, endDatePickerState: _p1._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{submitted: true}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
-var _user$project$AppReviews$Model = F2(
+var _user$project$AppReviews$Model = F5(
+	function (a, b, c, d, e) {
+		return {startDateValue: a, startDatePickerState: b, endDateValue: c, endDatePickerState: d, submitted: e};
+	});
+var _user$project$AppReviews$Submit = {ctor: 'Submit'};
+var _user$project$AppReviews$EndDateChanged = F2(
 	function (a, b) {
-		return {dateValue: a, datePickerState: b};
+		return {ctor: 'EndDateChanged', _0: a, _1: b};
 	});
 var _user$project$AppReviews$DateChanged = F2(
 	function (a, b) {
@@ -23852,12 +23874,16 @@ var _user$project$AppReviews$DateChanged = F2(
 	});
 var _user$project$AppReviews$init = {
 	ctor: '_Tuple2',
-	_0: {dateValue: _elm_lang$core$Maybe$Nothing, datePickerState: _abadi199$datetimepicker$DateTimePicker$initialState},
+	_0: {startDateValue: _elm_lang$core$Maybe$Nothing, startDatePickerState: _abadi199$datetimepicker$DateTimePicker$initialState, endDateValue: _elm_lang$core$Maybe$Nothing, endDatePickerState: _abadi199$datetimepicker$DateTimePicker$initialState, submitted: false},
 	_1: _elm_lang$core$Platform_Cmd$batch(
 		{
 			ctor: '::',
 			_0: A2(_abadi199$datetimepicker$DateTimePicker$initialCmd, _user$project$AppReviews$DateChanged, _abadi199$datetimepicker$DateTimePicker$initialState),
-			_1: {ctor: '[]'}
+			_1: {
+				ctor: '::',
+				_0: A2(_abadi199$datetimepicker$DateTimePicker$initialCmd, _user$project$AppReviews$EndDateChanged, _abadi199$datetimepicker$DateTimePicker$initialState),
+				_1: {ctor: '[]'}
+			}
 		})
 };
 var _user$project$AppReviews$view = function (model) {
@@ -23869,60 +23895,141 @@ var _user$project$AppReviews$view = function (model) {
 		});
 	var css = _p2.css;
 	return A2(
-		_elm_lang$html$Html$form,
+		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: A3(
-				_elm_lang$html$Html$node,
-				'style',
+			_0: A2(
+				_elm_lang$html$Html$form,
 				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text(css),
-					_1: {ctor: '[]'}
+					_0: A3(
+						_elm_lang$html$Html$node,
+						'style',
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(css),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _user$project$AppReviews$class(
+									{
+										ctor: '::',
+										_0: _user$project$DemoCss$Container,
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$p,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$label,
+											{ctor: '[]'},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('Start Date Picker: '),
+												_1: {
+													ctor: '::',
+													_0: A4(
+														_abadi199$datetimepicker$DateTimePicker$datePicker,
+														_user$project$AppReviews$DateChanged,
+														{ctor: '[]'},
+														model.startDatePickerState,
+														model.startDateValue),
+													_1: {ctor: '[]'}
+												}
+											}),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$p,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$label,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('End Date Picker: '),
+													_1: {
+														ctor: '::',
+														_0: A4(
+															_abadi199$datetimepicker$DateTimePicker$datePicker,
+															_user$project$AppReviews$EndDateChanged,
+															{ctor: '[]'},
+															model.endDatePickerState,
+															model.endDateValue),
+														_1: {ctor: '[]'}
+													}
+												}),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
 				}),
 			_1: {
 				ctor: '::',
 				_0: A2(
 					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _user$project$AppReviews$class(
-							{
-								ctor: '::',
-								_0: _user$project$DemoCss$Container,
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					},
+					{ctor: '[]'},
 					{
 						ctor: '::',
 						_0: A2(
-							_elm_lang$html$Html$p,
-							{ctor: '[]'},
+							_elm_lang$html$Html$button,
 							{
 								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$label,
-									{ctor: '[]'},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text('Date Picker: '),
-										_1: {
-											ctor: '::',
-											_0: A4(
-												_abadi199$datetimepicker$DateTimePicker$datePicker,
-												_user$project$AppReviews$DateChanged,
-												{ctor: '[]'},
-												model.datePickerState,
-												model.dateValue),
-											_1: {ctor: '[]'}
-										}
-									}),
+								_0: _elm_lang$html$Html_Events$onClick(_user$project$AppReviews$Submit),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Run Reports'),
 								_1: {ctor: '[]'}
 							}),
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: model.submitted ? A2(
+								_elm_lang$html$Html$div,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Submitted'),
+									_1: {ctor: '[]'}
+								}) : A2(
+								_elm_lang$html$Html$div,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Not Submitted Yet'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
 					}),
 				_1: {ctor: '[]'}
 			}
