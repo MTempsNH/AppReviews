@@ -23820,6 +23820,8 @@ var _abadi199$datetimepicker$DateTimePicker_Css$css = function (_p0) {
 var _user$project$DemoCss$css = _rtfeldman$elm_css$Css$stylesheet(
 	{ctor: '[]'});
 var _user$project$DemoCss$Container = {ctor: 'Container'};
+var _user$project$ReadData$mockString = 'Sample Data';
+var _user$project$ReadData$get = _user$project$ReadData$mockString;
 var _user$project$AppReviews$_p0 = _rtfeldman$elm_css_helpers$Html_CssHelpers$withNamespace('');
 var _user$project$AppReviews$id = _user$project$AppReviews$_p0.id;
 var _user$project$AppReviews$class = _user$project$AppReviews$_p0.$class;
@@ -23849,7 +23851,7 @@ var _user$project$AppReviews$update = F2(
 						{endDateValue: _p1._1, endDatePickerState: _p1._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
+			case 'Submit':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -23857,11 +23859,35 @@ var _user$project$AppReviews$update = F2(
 						{submitted: true}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{reviewData: _p1._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
-var _user$project$AppReviews$Model = F5(
-	function (a, b, c, d, e) {
-		return {startDateValue: a, startDatePickerState: b, endDateValue: c, endDatePickerState: d, submitted: e};
+var _user$project$AppReviews$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {startDateValue: a, startDatePickerState: b, endDateValue: c, endDatePickerState: d, submitted: e, reviewData: f};
+	});
+var _user$project$AppReviews$OnData = function (a) {
+	return {ctor: 'OnData', _0: a};
+};
+var _user$project$AppReviews$myOnClickHandler = F2(
+	function (start, end) {
+		return function () {
+			var _p2 = start;
+			if (_p2.ctor === 'Nothing') {
+				return _elm_lang$core$Debug$log('date is null');
+			} else {
+				var dateStr = _rluiten$elm_date_extra$Date_Extra_Format$isoDateString(_p2._0);
+				return _elm_lang$core$Debug$log(dateStr);
+			}
+		}()(
+			_user$project$AppReviews$OnData(_user$project$ReadData$get));
 	});
 var _user$project$AppReviews$Submit = {ctor: 'Submit'};
 var _user$project$AppReviews$EndDateChanged = F2(
@@ -23874,7 +23900,7 @@ var _user$project$AppReviews$DateChanged = F2(
 	});
 var _user$project$AppReviews$init = {
 	ctor: '_Tuple2',
-	_0: {startDateValue: _elm_lang$core$Maybe$Nothing, startDatePickerState: _abadi199$datetimepicker$DateTimePicker$initialState, endDateValue: _elm_lang$core$Maybe$Nothing, endDatePickerState: _abadi199$datetimepicker$DateTimePicker$initialState, submitted: false},
+	_0: {startDateValue: _elm_lang$core$Maybe$Nothing, startDatePickerState: _abadi199$datetimepicker$DateTimePicker$initialState, endDateValue: _elm_lang$core$Maybe$Nothing, endDatePickerState: _abadi199$datetimepicker$DateTimePicker$initialState, submitted: false, reviewData: 'empty'},
 	_1: _elm_lang$core$Platform_Cmd$batch(
 		{
 			ctor: '::',
@@ -23887,13 +23913,13 @@ var _user$project$AppReviews$init = {
 		})
 };
 var _user$project$AppReviews$view = function (model) {
-	var _p2 = _rtfeldman$elm_css$Css$compile(
+	var _p3 = _rtfeldman$elm_css$Css$compile(
 		{
 			ctor: '::',
 			_0: _abadi199$datetimepicker$DateTimePicker_Css$css,
 			_1: {ctor: '[]'}
 		});
-	var css = _p2.css;
+	var css = _p3.css;
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
@@ -24003,7 +24029,8 @@ var _user$project$AppReviews$view = function (model) {
 							_elm_lang$html$Html$button,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(_user$project$AppReviews$Submit),
+								_0: _elm_lang$html$Html_Events$onClick(
+									A2(_user$project$AppReviews$myOnClickHandler, model.startDateValue, model.endDateValue)),
 								_1: {ctor: '[]'}
 							},
 							{
@@ -24025,7 +24052,7 @@ var _user$project$AppReviews$view = function (model) {
 								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('Not Submitted Yet'),
+									_0: _elm_lang$html$Html$text(model.reviewData),
 									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}

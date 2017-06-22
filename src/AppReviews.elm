@@ -6,9 +6,13 @@ import DemoCss exposing (CssClasses(..))
 import Css
 import DateTimePicker.Css
 import Html.CssHelpers
+import Debug exposing (log)
 
 import Date exposing (Date)
 import DateTimePicker
+import Date.Extra.Format exposing ( isoDateString )
+
+import ReadData
 
 
 type alias Model = {
@@ -16,7 +20,8 @@ type alias Model = {
     startDatePickerState : DateTimePicker.State,
     endDateValue : Maybe Date,
     endDatePickerState : DateTimePicker.State,
-    submitted : Bool
+    submitted : Bool,
+    reviewData : String
     }
 
 init : (Model, Cmd Msg)
@@ -26,7 +31,8 @@ init =
     startDatePickerState = DateTimePicker.initialState,
     endDateValue = Nothing,
     endDatePickerState = DateTimePicker.initialState,
-    submitted = False
+    submitted = False,
+    reviewData = "empty"
       }, Cmd.batch
                  [ DateTimePicker.initialCmd DateChanged DateTimePicker.initialState,
                   DateTimePicker.initialCmd EndDateChanged DateTimePicker.initialState ]
@@ -37,6 +43,21 @@ type Msg = NoOp
     | DateChanged DateTimePicker.State (Maybe Date)
     | EndDateChanged DateTimePicker.State (Maybe Date)
     | Submit
+    | OnData String
+
+myOnClickHandler: Maybe Date -> Maybe Date -> Msg
+myOnClickHandler start end =
+    OnData ReadData.get
+    |> case start of
+    Nothing ->
+        log "date is null"
+
+    Just date ->
+        let
+            dateStr = isoDateString date
+        in
+            log dateStr
+
 
 view : Model -> Html Msg
 view model =
@@ -74,12 +95,14 @@ view model =
 
                        ]
             ],
-            div [] [ button [ onClick Submit ] [ text "Run Reports" ],
+            div [] [ button [ onClick (myOnClickHandler model.startDateValue model.endDateValue) ] [ text "Run Reports" ],
 
             if model.submitted then
                 div [] [ text "Submitted" ]
             else
-                div [] [ text "Not Submitted Yet" ]]
+
+                div [] [ text model.reviewData ]
+            ]
         ]
 
 
@@ -98,6 +121,10 @@ update msg model =
 
         Submit ->
             ( { model | submitted = True }, Cmd.none )
+
+        OnData res ->
+            ( { model | reviewData = res }, Cmd.none )
+
 
 
 subscriptions : Model -> Sub Msg
