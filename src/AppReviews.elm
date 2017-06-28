@@ -1,141 +1,101 @@
 module AppReviews exposing (..)
 
-import Html exposing (Html, button, label, div, form, text, p, program)
-import Html.Events exposing (onClick)
-import DemoCss exposing (CssClasses(..))
-import Css
-import DateTimePicker.Css
-import Html.CssHelpers
-import Debug exposing (log)
+import Html exposing (Html, div)
+import Html.Attributes exposing (href)
 
-import Date exposing (Date)
 import DateTimePicker
-import Date.Extra.Format exposing ( isoDateString )
 
-import ReadData
+import Debug exposing (log)
+import Models exposing (Model)
+import Navigation exposing (Location)
+import Routing exposing (parseLocation)
 
+import Form
+import NoRouteFound
+import ChartRoute
 
-type alias Model = {
-    startDateValue: Maybe Date,
-    startDatePickerState : DateTimePicker.State,
-    endDateValue : Maybe Date,
-    endDatePickerState : DateTimePicker.State,
-    submitted : Bool,
-    reviewData : String
-    }
-
-init : (Model, Cmd Msg)
-init =
-    ({
-    startDateValue = Nothing,
-    startDatePickerState = DateTimePicker.initialState,
-    endDateValue = Nothing,
-    endDatePickerState = DateTimePicker.initialState,
-    submitted = False,
-    reviewData = "empty"
-      }, Cmd.batch
-                 [ DateTimePicker.initialCmd DateChanged DateTimePicker.initialState,
-                  DateTimePicker.initialCmd EndDateChanged DateTimePicker.initialState ]
-             )
+import Msgs exposing (Msg)
 
 
-type Msg = NoOp
-    | DateChanged DateTimePicker.State (Maybe Date)
-    | EndDateChanged DateTimePicker.State (Maybe Date)
-    | Submit
-    | OnData String
-
-myOnClickHandler: Maybe Date -> Maybe Date -> Msg
-myOnClickHandler start end =
-    OnData ReadData.get
-    |> case start of
-    Nothing ->
-        log "date is null"
-
-    Just date ->
-        let
-            dateStr = isoDateString date
-        in
-            log dateStr
-
+init : Location -> (Model, Cmd Msg)
+init location =
+    let
+        initRoute =
+            Routing.parseLocation location
+    in
+        ({
+        startDateValue = Nothing,
+        startDatePickerState = DateTimePicker.initialState,
+        endDateValue = Nothing,
+        endDatePickerState = DateTimePicker.initialState,
+        submitted = False,
+        reviewData = "empty",
+        inError = False,
+        route = initRoute
+          }, Cmd.batch
+                     [ DateTimePicker.initialCmd Msgs.DateChanged DateTimePicker.initialState,
+                      DateTimePicker.initialCmd Msgs.EndDateChanged DateTimePicker.initialState ]
+                 )
 
 view : Model -> Html Msg
 view model =
-    let
-            { css } =
-                Css.compile [ DateTimePicker.Css.css ]
-    in
-        div [] [ form []
-            [ Html.node "style" [] [ Html.text css ]
-                        , div [ class [ Container ] ]
-                [ p
-                    []
-                    [ label []
-                        [ text "Start Date Picker: "
-                        , DateTimePicker.datePicker
-                            DateChanged
-                            []
-                            model.startDatePickerState
-                            model.startDateValue
-                        ]
-                    ]
+    div []
+        [ page model ]
 
-                ],
-                div [] [ p
-                           []
-                           [ label []
-                               [ text "End Date Picker: "
-                               , DateTimePicker.datePicker
-                                   EndDateChanged
-                                   []
-                                   model.endDatePickerState
-                                   model.endDateValue
-                               ]
-                           ]
+page : Model -> Html Msg
+page model =
+    case model.route of
+        Models.HomeRoute ->
+            Form.formView model
 
-                       ]
-            ],
-            div [] [ button [ onClick (myOnClickHandler model.startDateValue model.endDateValue) ] [ text "Run Reports" ],
+        Models.ChartRoute ->
+            ChartRoute.chartRoute
 
-            if model.submitted then
-                div [] [ text "Submitted" ]
-            else
-
-                div [] [ text model.reviewData ]
-            ]
-        ]
-
+        Models.NoRouteFound ->
+            NoRouteFound.notFoundView
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
+        Msgs.NoOp ->
             ( model, Cmd.none )
 
-        DateChanged state value ->
+        Msgs.DateChanged state value ->
             ( { model | startDateValue = value, startDatePickerState = state }, Cmd.none )
 
-        EndDateChanged state value ->
+        Msgs.EndDateChanged state value ->
             ( { model | endDateValue = value, endDatePickerState = state }, Cmd.none )
 
-        Submit ->
+        Msgs.Submit ->
             ( { model | submitted = True }, Cmd.none )
 
-        OnData res ->
-            ( { model | reviewData = res }, Cmd.none )
+        Msgs.OnData res ->
+            ( { model | reviewData = res, inError = False }, Cmd.none )
 
+        Msgs.OnFormError ->
+            ( { model | inError = True }, Cmd.none )
+
+        Msgs.OnFormSuccess ->
+            ( { model | inError = False }, Cmd.none )
+
+        Msgs.OnLocationChange location ->
+            let
+                newRoute =
+                    parseLocation location
+            in
+            ( { model | route = newRoute }, Cmd.none )
+
+        Msgs.NewURL location ->
+             ( model, Navigation.newUrl location)
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.none
 
-{ id, class, classList } =
-    Html.CssHelpers.withNamespace ""
-
 main : Program Never Model Msg
 main =
-    program
+    Navigation.program Msgs.OnLocationChange
         { init = init
         , view = view
         , update = update
