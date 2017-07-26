@@ -10,12 +10,17 @@ import Models exposing (Model)
 import Navigation exposing (Location)
 import Routing exposing (parseLocation)
 
+import DemoCss exposing (CssClasses(..))
+import Html.CssHelpers
+
 import Form
 import NoRouteFound
 import ChartRoute
 
 import Msgs exposing (Msg)
 
+{ id, class, classList } =
+    Html.CssHelpers.withNamespace ""
 
 init : Location -> (Model, Cmd Msg)
 init location =
@@ -39,7 +44,7 @@ init location =
 
 view : Model -> Html Msg
 view model =
-    div []
+    div [ class [ Container ] ]
         [ page model ]
 
 page : Model -> Html Msg
@@ -53,7 +58,6 @@ page model =
 
         Models.NoRouteFound ->
             NoRouteFound.notFoundView
-
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -87,8 +91,10 @@ update msg model =
             ( { model | route = newRoute }, Cmd.none )
 
         Msgs.NewURL location ->
-             ( model, Navigation.newUrl location)
+            ( model, Navigation.newUrl location)
 
+        Msgs.ListApps ->
+            (model, getListOfApps)
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.none

@@ -1,3 +1,8 @@
+.Container {
+    background-color: #FFF;
+}
+
+
 .elm-input-datepickerDatePicker {
     position: relative;
     min-width: 475px;

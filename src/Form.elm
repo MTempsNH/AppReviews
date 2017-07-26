@@ -48,10 +48,10 @@ myLinkHandler destination =
     in
         case dest of
         "#chart" ->
-            Msgs.NewURL "#chart"
+            Msgs.NewURL dest
 
         _ ->
-            Msgs.NoOp
+           Msgs.NewURL dest
 
 formView : Model -> Html Msg
 formView model =
@@ -67,7 +67,7 @@ formView model =
 
         div [] [ form []
             [ Html.node "style" [] [ Html.text css ]
-                        , div [ class [ Container ] ]
+                        , div [ class [ FormContainer ] ]
                 [ p
                     []
                     [ label []
@@ -103,7 +103,8 @@ formView model =
             else
 
                 -- div [] [ text model.reviewData ],
-                div [] [ a [ onClick (myLinkHandler "#chart") ] [ text "Continue" ]]
+                div [] [ a [ onClick (myLinkHandler "#chart") ] [ text "Continue" ]],
+                div [] [ a [ onClick (myLinkHandler "#pause") ] [ text "Pause" ]]
             ]
         ]
     ]

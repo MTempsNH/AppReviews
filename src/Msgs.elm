@@ -14,3 +14,6 @@ type Msg = NoOp
     | OnFormSuccess
     | OnLocationChange Location
     | NewURL String
+
+    | ListApps
+    | ListOfApps (Result Http.Error String)

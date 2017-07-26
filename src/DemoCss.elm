@@ -12,3 +12,4 @@ css =
 
 type CssClasses
     = Container
+    | FormContainer
