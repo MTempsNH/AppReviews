@@ -59,6 +59,10 @@ page model =
         Models.NoRouteFound ->
             NoRouteFound.notFoundView
 
+
+getListOfApps : Msg -> Cmd Msg
+getListOfApps msg = Cmd.none
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
