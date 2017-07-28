@@ -8,6 +8,7 @@ type alias Model = {
     startDatePickerState : DateTimePicker.State,
     endDateValue : Maybe Date,
     endDatePickerState : DateTimePicker.State,
+    listOfApps : String,
     submitted : Bool,
     reviewData : String,
     inError : Bool,

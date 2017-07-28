@@ -3,6 +3,7 @@ import Navigation exposing (Location)
 
 import DateTimePicker
 import Date exposing (Date)
+import Http exposing (Error)
 
 
 type Msg = NoOp
@@ -16,4 +17,4 @@ type Msg = NoOp
     | NewURL String
 
     | ListApps
-    | ListOfApps (Result Http.Error String)
+    | ListOfApps (Result Error String)

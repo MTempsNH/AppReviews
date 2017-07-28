@@ -1,9 +1,9 @@
 module ChartRoute exposing (..)
 
 import Html exposing (Html, div, text)
+import Models exposing (Model)
 
-chartRoute : Html msg
-chartRoute =
+chartRoute : Model -> Html msg
+chartRoute model =
     div []
-        [ text "chart route"
-        ]
+        [ text model.listOfApps]

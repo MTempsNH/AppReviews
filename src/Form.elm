@@ -39,7 +39,8 @@ myOnClickHandler start end =
             dateStr = isoDateString date
         in
             log dateStr
-            Msgs.OnData ReadData.get
+            -- Msgs.OnData ReadData.get
+            Msgs.ListApps
 
 myLinkHandler: String -> Msg
 myLinkHandler destination =

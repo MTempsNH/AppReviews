@@ -7089,7 +7089,11 @@ var _abadi199$dateparser$InternalDate$toHour = F2(
 				return hour;
 			}
 		} else {
-			return hour + 12;
+			if (_p0._1 === 12) {
+				return 12;
+			} else {
+				return hour + 12;
+			}
 		}
 	});
 var _abadi199$dateparser$InternalDate$toHour24 = function (internalDate) {
@@ -28971,9 +28975,9 @@ var _evancz$url_parser$UrlParser$stringParam = function (name) {
 var _evancz$url_parser$UrlParser$intParam = function (name) {
 	return A2(_evancz$url_parser$UrlParser$customParam, name, _evancz$url_parser$UrlParser$intParamHelp);
 };
-var _user$project$Models$Model = F8(
-	function (a, b, c, d, e, f, g, h) {
-		return {startDateValue: a, startDatePickerState: b, endDateValue: c, endDatePickerState: d, submitted: e, reviewData: f, inError: g, route: h};
+var _user$project$Models$Model = F9(
+	function (a, b, c, d, e, f, g, h, i) {
+		return {startDateValue: a, startDatePickerState: b, endDateValue: c, endDatePickerState: d, listOfApps: e, submitted: f, reviewData: g, inError: h, route: i};
 	});
 var _user$project$Models$NoRouteFound = {ctor: 'NoRouteFound'};
 var _user$project$Models$ChartRoute = {ctor: 'ChartRoute'};
@@ -29005,6 +29009,10 @@ var _user$project$DemoCss$FormContainer = {ctor: 'FormContainer'};
 var _user$project$DemoCss$Container = {ctor: 'Container'};
 var _user$project$ReadData$mockString = 'Sample Data';
 var _user$project$ReadData$get = _user$project$ReadData$mockString;
+var _user$project$Msgs$ListOfApps = function (a) {
+	return {ctor: 'ListOfApps', _0: a};
+};
+var _user$project$Msgs$ListApps = {ctor: 'ListApps'};
 var _user$project$Msgs$NewURL = function (a) {
 	return {ctor: 'NewURL', _0: a};
 };
@@ -29042,7 +29050,7 @@ var _user$project$Form$myOnClickHandler = F2(
 			return A2(_elm_lang$core$Debug$log, 'date is null', _user$project$Msgs$OnFormError);
 		} else {
 			var dateStr = _rluiten$elm_date_extra$Date_Extra_Format$isoDateString(_p1._0);
-			return A3(_elm_lang$core$Debug$log, dateStr, _user$project$Msgs$OnData, _user$project$ReadData$get);
+			return A2(_elm_lang$core$Debug$log, dateStr, _user$project$Msgs$ListApps);
 		}
 	});
 var _user$project$Form$_p2 = _rtfeldman$elm_css_helpers$Html_CssHelpers$withNamespace('');
@@ -29267,17 +29275,32 @@ var _user$project$NoRouteFound$notFoundView = A2(
 		_0: _elm_lang$html$Html$text('Not found'),
 		_1: {ctor: '[]'}
 	});
-var _user$project$ChartRoute$chartRoute = A2(
-	_elm_lang$html$Html$div,
-	{ctor: '[]'},
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html$text('chart route'),
-		_1: {ctor: '[]'}
-	});
+var _user$project$ChartRoute$chartRoute = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(model.listOfApps),
+			_1: {ctor: '[]'}
+		});
+};
 var _user$project$AppReviews$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
+var _user$project$AppReviews$decodeUrl = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'title',
+		_1: {ctor: '[]'}
+	},
+	_elm_lang$core$Json_Decode$string);
+var _user$project$AppReviews$getListOfApps = function () {
+	var url = 'https://jsonplaceholder.typicode.com/posts/1';
+	var request = A2(_elm_lang$http$Http$get, url, _user$project$AppReviews$decodeUrl);
+	return A2(_elm_lang$http$Http$send, _user$project$Msgs$ListOfApps, request);
+}();
 var _user$project$AppReviews$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
@@ -29341,12 +29364,26 @@ var _user$project$AppReviews$update = F2(
 						{route: newRoute}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
+			case 'NewURL':
 				return {
 					ctor: '_Tuple2',
 					_0: model,
 					_1: _elm_lang$navigation$Navigation$newUrl(_p0._0)
 				};
+			case 'ListApps':
+				return {ctor: '_Tuple2', _0: model, _1: _user$project$AppReviews$getListOfApps};
+			default:
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{listOfApps: _p0._0._0}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				}
 		}
 	});
 var _user$project$AppReviews$page = function (model) {
@@ -29355,7 +29392,7 @@ var _user$project$AppReviews$page = function (model) {
 		case 'HomeRoute':
 			return _user$project$Form$formView(model);
 		case 'ChartRoute':
-			return _user$project$ChartRoute$chartRoute;
+			return _user$project$ChartRoute$chartRoute(model);
 		default:
 			return _user$project$NoRouteFound$notFoundView;
 	}
@@ -29364,7 +29401,7 @@ var _user$project$AppReviews$init = function (location) {
 	var initRoute = _user$project$Routing$parseLocation(location);
 	return {
 		ctor: '_Tuple2',
-		_0: {startDateValue: _elm_lang$core$Maybe$Nothing, startDatePickerState: _abadi199$datetimepicker$DateTimePicker$initialState, endDateValue: _elm_lang$core$Maybe$Nothing, endDatePickerState: _abadi199$datetimepicker$DateTimePicker$initialState, submitted: false, reviewData: 'empty', inError: false, route: initRoute},
+		_0: {startDateValue: _elm_lang$core$Maybe$Nothing, startDatePickerState: _abadi199$datetimepicker$DateTimePicker$initialState, endDateValue: _elm_lang$core$Maybe$Nothing, endDatePickerState: _abadi199$datetimepicker$DateTimePicker$initialState, listOfApps: 'None', submitted: false, reviewData: 'empty', inError: false, route: initRoute},
 		_1: _elm_lang$core$Platform_Cmd$batch(
 			{
 				ctor: '::',
@@ -29407,7 +29444,7 @@ var _user$project$AppReviews$main = A2(
 var Elm = {};
 Elm['AppReviews'] = Elm['AppReviews'] || {};
 if (typeof _user$project$AppReviews$main !== 'undefined') {
-    _user$project$AppReviews$main(Elm['AppReviews'], 'AppReviews', {"types":{"unions":{"DateTimePicker.Internal.TimeIndicator":{"args":[],"tags":{"HourIndicator":[],"MinuteIndicator":[],"AMPMIndicator":[]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Msgs.Msg":{"args":[],"tags":{"OnFormSuccess":[],"OnFormError":[],"OnLocationChange":["Navigation.Location"],"DateChanged":["DateTimePicker.State","Maybe.Maybe Date.Date"],"Submit":[],"NewURL":["String"],"NoOp":[],"EndDateChanged":["DateTimePicker.State","Maybe.Maybe Date.Date"],"OnData":["String"]}},"DateTimePicker.Internal.InternalState":{"args":[],"tags":{"InternalState":["DateTimePicker.Internal.StateValue"]}}},"aliases":{"DateTimePicker.Internal.Time":{"args":[],"type":"{ hour : Maybe.Maybe Int , minute : Maybe.Maybe Int , amPm : Maybe.Maybe String }"},"DateTimePicker.Internal.StateValue":{"args":[],"type":"{ inputFocused : Bool , forceClose : Bool , event : String , today : Maybe.Maybe Date.Date , titleDate : Maybe.Maybe Date.Date , date : Maybe.Maybe Date.Date , time : DateTimePicker.Internal.Time , hourPickerStart : Int , minutePickerStart : Int , currentAngle : Maybe.Maybe Float , activeTimeIndicator : Maybe.Maybe DateTimePicker.Internal.TimeIndicator }"},"DateTimePicker.State":{"args":[],"type":"DateTimePicker.Internal.InternalState"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"}},"message":"Msgs.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$AppReviews$main(Elm['AppReviews'], 'AppReviews', {"types":{"unions":{"DateTimePicker.Internal.TimeIndicator":{"args":[],"tags":{"HourIndicator":[],"MinuteIndicator":[],"AMPMIndicator":[]}},"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Date.Date":{"args":[],"tags":{"Date":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Msgs.Msg":{"args":[],"tags":{"OnFormSuccess":[],"OnFormError":[],"OnLocationChange":["Navigation.Location"],"ListApps":[],"DateChanged":["DateTimePicker.State","Maybe.Maybe Date.Date"],"ListOfApps":["Result.Result Http.Error String"],"Submit":[],"NewURL":["String"],"NoOp":[],"EndDateChanged":["DateTimePicker.State","Maybe.Maybe Date.Date"],"OnData":["String"]}},"DateTimePicker.Internal.InternalState":{"args":[],"tags":{"InternalState":["DateTimePicker.Internal.StateValue"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"DateTimePicker.Internal.Time":{"args":[],"type":"{ hour : Maybe.Maybe Int , minute : Maybe.Maybe Int , amPm : Maybe.Maybe String }"},"DateTimePicker.Internal.StateValue":{"args":[],"type":"{ inputFocused : Bool , forceClose : Bool , event : String , today : Maybe.Maybe Date.Date , titleDate : Maybe.Maybe Date.Date , date : Maybe.Maybe Date.Date , time : DateTimePicker.Internal.Time , hourPickerStart : Int , minutePickerStart : Int , currentAngle : Maybe.Maybe Float , activeTimeIndicator : Maybe.Maybe DateTimePicker.Internal.TimeIndicator }"},"DateTimePicker.State":{"args":[],"type":"DateTimePicker.Internal.InternalState"},"Navigation.Location":{"args":[],"type":"{ href : String , host : String , hostname : String , protocol : String , origin : String , port_ : String , pathname : String , search : String , hash : String , username : String , password : String }"}},"message":"Msgs.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

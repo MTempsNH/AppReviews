@@ -2,6 +2,8 @@ module AppReviews exposing (..)
 
 import Html exposing (Html, div)
 import Html.Attributes exposing (href)
+import Http
+import Json.Decode exposing (Decoder, at, string)
 
 import DateTimePicker
 
@@ -33,6 +35,7 @@ init location =
         startDatePickerState = DateTimePicker.initialState,
         endDateValue = Nothing,
         endDatePickerState = DateTimePicker.initialState,
+        listOfApps = "None",
         submitted = False,
         reviewData = "empty",
         inError = False,
@@ -54,14 +57,26 @@ page model =
             Form.formView model
 
         Models.ChartRoute ->
-            ChartRoute.chartRoute
+            ChartRoute.chartRoute model
 
         Models.NoRouteFound ->
             NoRouteFound.notFoundView
 
 
-getListOfApps : Msg -> Cmd Msg
-getListOfApps msg = Cmd.none
+getListOfApps : Cmd Msg
+getListOfApps =
+    let
+        url =
+            "https://jsonplaceholder.typicode.com/posts/1"
+
+        request = Http.get url decodeUrl
+
+    in
+        Http.send Msgs.ListOfApps request
+
+decodeUrl : Decoder String
+decodeUrl =
+  at ["title"] string
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -99,6 +114,12 @@ update msg model =
 
         Msgs.ListApps ->
             (model, getListOfApps)
+
+        Msgs.ListOfApps (Ok data) ->
+            ( { model | listOfApps = data }, Cmd.none)
+
+        Msgs.ListOfApps (Err _) ->
+            (model, Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions model = Sub.none
