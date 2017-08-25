@@ -29303,87 +29303,90 @@ var _user$project$AppReviews$getListOfApps = function () {
 }();
 var _user$project$AppReviews$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'NoOp':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			case 'DateChanged':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{startDateValue: _p0._1, startDatePickerState: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'EndDateChanged':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{endDateValue: _p0._1, endDatePickerState: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'Submit':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{submitted: true}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'OnData':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{reviewData: _p0._0, inError: false}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'OnFormError':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{inError: true}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'OnFormSuccess':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{inError: false}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'OnLocationChange':
-				var newRoute = _user$project$Routing$parseLocation(_p0._0);
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{route: newRoute}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'NewURL':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _elm_lang$navigation$Navigation$newUrl(_p0._0)
-				};
-			case 'ListApps':
-				return {ctor: '_Tuple2', _0: model, _1: _user$project$AppReviews$getListOfApps};
-			default:
-				if (_p0._0.ctor === 'Ok') {
+		update:
+		while (true) {
+			var _p0 = msg;
+			switch (_p0.ctor) {
+				case 'NoOp':
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				case 'DateChanged':
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
-							{listOfApps: _p0._0._0}),
+							{startDateValue: _p0._1, startDatePickerState: _p0._0}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
-				} else {
-					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-				}
+				case 'EndDateChanged':
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{endDateValue: _p0._1, endDatePickerState: _p0._0}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'Submit':
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{submitted: true}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'OnData':
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{reviewData: _p0._0, inError: false}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'OnFormError':
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{inError: true}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'OnFormSuccess':
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{inError: false}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'OnLocationChange':
+					var newRoute = _user$project$Routing$parseLocation(_p0._0);
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{route: newRoute}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				case 'NewURL':
+					return {
+						ctor: '_Tuple2',
+						_0: model,
+						_1: _elm_lang$navigation$Navigation$newUrl(_p0._0)
+					};
+				case 'ListApps':
+					return {ctor: '_Tuple2', _0: model, _1: _user$project$AppReviews$getListOfApps};
+				default:
+					if (_p0._0.ctor === 'Ok') {
+						var _v1 = _user$project$Msgs$NewURL('#chart'),
+							_v2 = _elm_lang$core$Native_Utils.update(
+							model,
+							{listOfApps: _p0._0._0});
+						msg = _v1;
+						model = _v2;
+						continue update;
+					} else {
+						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+					}
+			}
 		}
 	});
 var _user$project$AppReviews$page = function (model) {

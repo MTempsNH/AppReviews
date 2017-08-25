@@ -116,7 +116,8 @@ update msg model =
             (model, getListOfApps)
 
         Msgs.ListOfApps (Ok data) ->
-            ( { model | listOfApps = data }, Cmd.none)
+            ( { model | listOfApps = data }
+                |> update (Msgs.NewURL "#chart") )
 
         Msgs.ListOfApps (Err _) ->
             (model, Cmd.none)
